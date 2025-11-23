@@ -1,0 +1,269 @@
+!
+version 15.0
+service timestamps log datetime msec
+no service timestamps debug datetime msec
+service password-encryption
+!
+hostname SW1
+!
+enable secret 5 $1$mERr$AFX/pZT1Lh7NP3Dp3P/qq/
+!
+!
+!
+!
+!
+aaa new-model
+!
+aaa authentication login default group tacacs+ local 
+!
+!
+aaa authorization exec default group tacacs+ local
+!
+!
+ip ssh version 2
+ip ssh time-out 60
+no ip domain-lookup
+ip domain-name corp.local
+!
+username admin secret 5 $1$mERr$AFX/pZT1Lh7NP3Dp3P/qq/
+username operator secret 5 $1$mERr$JQPq/.xL9j.tcxdeqYixt1
+!
+ip arp inspection vlan 10,20,30,99
+!
+ip dhcp snooping vlan 10,20,30,99
+ip dhcp snooping
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+spanning-tree vlan 10,20,30,99 priority 0
+!
+interface Port-channel1
+ description LACP-PortChannel-to-SW2
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 10,20,30,99
+ switchport mode trunk
+!
+interface FastEthernet0/1
+ switchport access vlan 10
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security mac-address sticky 
+ switchport port-security violation restrict 
+ switchport port-security mac-address sticky 00D0.FFD8.239B
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/2
+ switchport access vlan 20
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security mac-address sticky 
+ switchport port-security violation restrict 
+ switchport port-security mac-address sticky 0060.3EEC.542C
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/3
+ switchport access vlan 20
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security mac-address sticky 
+ switchport port-security violation restrict 
+ switchport port-security mac-address sticky 0001.63EB.7644
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/4
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/5
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/6
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/7
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/8
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/9
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/10
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/11
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/12
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/13
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/14
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/15
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/16
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/17
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/18
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/19
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/20
+ switchport access vlan 99
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport port-security
+ switchport port-security mac-address sticky 
+ switchport port-security mac-address sticky 000C.85CA.373E
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/21
+ switchport access vlan 99
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport port-security
+ switchport port-security mac-address sticky 
+ switchport port-security mac-address sticky 0060.709D.557A
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/22
+ switchport access vlan 99
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport port-security
+ switchport port-security mac-address sticky 
+ switchport port-security mac-address sticky 00E0.F93A.D58A
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/23
+ ip dhcp snooping limit rate 10
+!
+interface FastEthernet0/24
+ switchport trunk allowed vlan 10,20,30,99
+ switchport mode trunk
+!
+interface GigabitEthernet0/1
+ description Link-Aggregation to SW2
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 10,20,30,99
+ switchport mode trunk
+ channel-group 1 mode active
+!
+interface GigabitEthernet0/2
+ description Link-Aggregation to SW2
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 10,20,30,99
+ switchport mode trunk
+ channel-group 1 mode active
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan99
+ description Management Interface
+ ip address 10.99.99.4 255.255.255.0
+!
+ip default-gateway 10.99.99.1
+!
+no cdp run
+!
+banner motd ^
+************************************************************
+* WARNING: AUTHORIZED USERS ONLY! ACCESS IS MONITORED.     *
+************************************************************
+^
+logging trap debugging
+logging 10.99.99.12
+tacacs-server host 10.99.99.11 key Cisco123
+!
+!
+!
+ip access-list standard VTY_LOGIN
+ permit 10.99.99.0 0.0.0.255
+ permit 10.20.20.0 0.0.0.255
+ deny any
+line con 0
+ login
+!
+line vty 0 4
+ access-class VTY_LOGIN in
+ logging synchronous
+ transport input ssh
+line vty 5 15
+!
+!
+!
+!
+end
+

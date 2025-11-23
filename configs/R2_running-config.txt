@@ -1,0 +1,170 @@
+!
+version 15.1
+service timestamps log datetime msec
+no service timestamps debug datetime msec
+service password-encryption
+!
+hostname R2
+!
+!
+!
+enable secret 5 $1$mERr$AFX/pZT1Lh7NP3Dp3P/qq/
+!
+!
+!
+!
+!
+aaa new-model
+!
+aaa authentication login default group tacacs+ local 
+!
+!
+aaa authorization exec default group tacacs+ local
+!
+!
+!
+!
+!
+no ip cef
+no ipv6 cef
+!
+!
+!
+username admin privilege 15 secret 5 $1$mERr$AFX/pZT1Lh7NP3Dp3P/qq/
+username operator privilege 5 secret 5 $1$mERr$JQPq/.xL9j.tcxdeqYixt1
+!
+!
+license udi pid CISCO2911/K9 sn FTX1524BQ48-
+!
+!
+!
+!
+!
+!
+!
+!
+!
+ip ssh version 2
+ip ssh time-out 60
+no ip domain-lookup
+ip domain-name corp.local
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0
+ description trunk-link to SW2
+ no ip address
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 ospf123
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/0.10
+ encapsulation dot1Q 10
+ ip address 10.10.10.3 255.255.255.0
+ standby 10 ip 10.10.10.1
+!
+interface GigabitEthernet0/0.20
+ encapsulation dot1Q 20
+ ip address 10.20.20.3 255.255.255.0
+ standby 20 ip 10.20.20.1
+!
+interface GigabitEthernet0/0.30
+ encapsulation dot1Q 30
+ ip address 10.30.30.3 255.255.255.0
+ standby 30 ip 10.30.30.1
+!
+interface GigabitEthernet0/0.99
+ encapsulation dot1Q 99
+ ip address 10.99.99.3 255.255.255.0
+ standby 99 ip 10.99.99.1
+!
+interface GigabitEthernet0/1
+ ip address 192.168.12.2 255.255.255.252
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 ospf123
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/2
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface FastEthernet0/3/0
+ switchport mode access
+!
+interface FastEthernet0/3/1
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/3/2
+ switchport mode access
+ shutdown
+!
+interface FastEthernet0/3/3
+ switchport mode access
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router ospf 1
+ log-adjacency-changes
+ area 0 authentication message-digest
+ network 10.10.10.0 0.0.0.255 area 0
+ network 10.20.20.0 0.0.0.255 area 0
+ network 10.30.30.0 0.0.0.255 area 0
+ network 10.99.99.0 0.0.0.255 area 0
+ network 192.168.12.0 0.0.0.3 area 0
+!
+ip classless
+ip route 0.0.0.0 0.0.0.0 192.168.12.1 
+!
+ip flow-export version 9
+!
+!
+ip access-list standard VTY_LOGIN
+ permit 10.99.99.0 0.0.0.255
+ permit 10.20.20.0 0.0.0.255
+ deny any
+!
+banner motd ^
+************************************************************
+* WARNING: AUTHORIZED USERS ONLY! ACCESS IS MONITORED.     *
+************************************************************
+^
+!
+tacacs-server host 10.99.99.11 key Cisco123
+!
+!
+snmp-server community netview RO
+!
+logging trap debugging
+logging 10.99.99.12
+line con 0
+ exec-timeout 5 0
+!
+line aux 0
+!
+line vty 0 4
+ access-class VTY_LOGIN in
+ exec-timeout 5 0
+ logging synchronous
+ login authentication default
+ transport input ssh
+!
+!
+ntp server 10.99.99.12
+ntp update-calendar
+!
+end
+

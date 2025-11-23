@@ -1,0 +1,221 @@
+!
+version 15.0
+service timestamps log datetime msec
+no service timestamps debug datetime msec
+service password-encryption
+!
+hostname SW2
+!
+enable secret 5 $1$mERr$AFX/pZT1Lh7NP3Dp3P/qq/
+!
+!
+!
+!
+!
+aaa new-model
+!
+aaa authentication login default group tacacs+ local 
+!
+!
+aaa authorization exec default group tacacs+ local
+!
+!
+ip ssh version 2
+ip ssh time-out 60
+no ip domain-lookup
+ip domain-name corp.local
+!
+username admin secret 5 $1$mERr$AFX/pZT1Lh7NP3Dp3P/qq/
+username operator secret 5 $1$mERr$JQPq/.xL9j.tcxdeqYixt1
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+spanning-tree vlan 10,20,30,99 priority 4096
+!
+interface Port-channel1
+ description LACP-PortChannel-to-SW1
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 10,20,30,99
+ switchport mode trunk
+!
+interface FastEthernet0/1
+ switchport access vlan 30
+ switchport mode access
+ spanning-tree portfast
+!
+interface FastEthernet0/2
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/3
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/4
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/5
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/6
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/7
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/8
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/9
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/11
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/12
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/13
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/14
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/15
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/16
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/17
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/18
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/19
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/20
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/21
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/22
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/23
+ description Unused link to R1
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/24
+ description Trunk-to-R2
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 10,20,30,99
+ switchport mode trunk
+!
+interface GigabitEthernet0/1
+ description Link-Aggregation-to-SW1
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 10,20,30,99
+ switchport mode trunk
+ channel-group 1 mode active
+!
+interface GigabitEthernet0/2
+ description Link-Aggregation-to-SW1
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 10,20,30,99
+ switchport mode trunk
+ channel-group 1 mode active
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan99
+ description Management VLAN
+ ip address 10.99.99.5 255.255.255.0
+!
+ip default-gateway 10.99.99.1
+!
+banner motd ^
+************************************************************
+* WARNING: AUTHORIZED USERS ONLY! ACCESS IS MONITORED.     *
+************************************************************
+^
+logging trap debugging
+logging 10.99.99.12
+tacacs-server host 10.99.99.11 key Cisco123
+!
+!
+!
+ip access-list standard VTY_LOGIN
+ permit 10.99.99.0 0.0.0.255
+ permit 10.20.20.0 0.0.0.255
+ deny any
+line con 0
+ login
+ exec-timeout 5 0
+!
+line vty 0 4
+ access-class VTY_LOGIN in
+ exec-timeout 5 0
+ logging synchronous
+ login authentication default
+ transport input ssh
+line vty 5 15
+!
+!
+!
+ntp server 10.99.99.12
+!
+end
+
